@@ -12,6 +12,13 @@
       this._ctx.clearRect(0, 0, this._width, this._height);
     }
 
+    drawRect(x, y, width, height, style) {
+      this._ctx.save();
+      this._ctx.strokeStyle = style;
+      this._ctx.strokeRect(x, y, width, height);
+      this._ctx.restore();
+    }
+
     fillRect(x, y, width, height, style) {
       this._ctx.save();
       this._ctx.fillStyle = style;
@@ -33,7 +40,7 @@
       this._canvasElem.width = canvasWidth;
       this._canvasElem.height = canvasHeight;
       this._canvasElem.tabIndex = 0;
-      // this._canvasElem.style.outline = 'none';
+      this._canvasElem.style.outline = 'none';
       this._ctx = this._canvasElem.getContext('2d');
       this._canvas = new Canvas(this._ctx);
 
@@ -65,6 +72,14 @@
       if (el) {
         this.mount(el);
       }
+    }
+
+    get width() {
+      return this._canvasElem.width;
+    }
+
+    get height() {
+      return this._canvasElem.height;
     }
 
     get pressedKeys() {
