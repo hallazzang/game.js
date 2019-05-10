@@ -8,22 +8,46 @@
 
 <body>
 	<h1>game.js Example</h1>
-	<p>Click and move your mouse in the area below:</p>
+	<p>Click and move your mouse in the area below.</p>
+	<p>You can use arrow keys to move blue box around.</p>
 	<canvas id="canvas"></canvas>
 	<script src="game.js">
+
 	</script>
 	<script>
 		(() => {
         const game = new Game({
           el: '#canvas',
+          canvasWidth: 400,
+          canvasHeight: 400,
+          data: {
+            player: {
+              x: 0,
+              y: 0,
+            },
+          },
           loop(t, dt) {
+            if (this.keys.has('ArrowLeft')) {
+              this.data.player.x -= 300 * dt;
+            }
+            if (this.keys.has('ArrowRight')) {
+              this.data.player.x += 300 * dt;
+            }
+            if (this.keys.has('ArrowUp')) {
+              this.data.player.y -= 300 * dt;
+            }
+            if (this.keys.has('ArrowDown')) {
+              this.data.player.y += 300 * dt;
+            }
             this.canvas.clear();
             this.canvas.drawRect(0, 0, this.width, this.height);
+            this.canvas.fillRect(this.data.player.x, this.data.player.y, 30, 30, 'blue');
             if (this.mouse.pressed) {
               this.canvas.fillRect(this.mouse.x-25, this.mouse.y-25, 50, 50, 'red');
             }
           },
         });
+
         game.run();
       })();
 	</script>
