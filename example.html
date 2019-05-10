@@ -16,8 +16,8 @@
           loop(t, dt) {
             this.canvas.clear();
             this.canvas.drawRect(0, 0, this.width, this.height);
-            if (this.isMousePressed) {
-              this.canvas.fillRect(this.mousePos.x-25, this.mousePos.y-25, 50, 50, 'red');
+            if (this.mouse.pressed) {
+              this.canvas.fillRect(this.mouse.x-25, this.mouse.y-25, 50, 50, 'red');
             }
           },
         });

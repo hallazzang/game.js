@@ -2,14 +2,13 @@
   const global = this;
 
   class Canvas {
-    constructor(ctx) {
-      this._ctx = ctx;
-      this._width = ctx.canvas.width;
-      this._height = ctx.canvas.height;
+    constructor(canvasElement) {
+      this._canvasElement = canvasElement;
+      this._ctx = canvasElement.getContext('2d');
     }
 
     clear() {
-      this._ctx.clearRect(0, 0, this._width, this._height);
+      this._ctx.clearRect(0, 0, this._canvasElement.width, this._canvasElement.height);
     }
 
     drawRect(x, y, width, height, style) {
@@ -33,40 +32,40 @@
         el,
         canvasWidth = 600,
         canvasHeight = 480,
-        loop = () => {},
+        data = {},
+        loop = function() {},
       } = config;
 
-      this._canvasElem = document.createElement('canvas');
-      this._canvasElem.width = canvasWidth;
-      this._canvasElem.height = canvasHeight;
-      this._canvasElem.tabIndex = 0;
-      this._canvasElem.style.outline = 'none';
-      this._ctx = this._canvasElem.getContext('2d');
-      this._canvas = new Canvas(this._ctx);
+      this._canvasElement = document.createElement('canvas');
+      this._canvasElement.width = canvasWidth;
+      this._canvasElement.height = canvasHeight;
+      this._canvasElement.tabIndex = 0;
+      this._canvasElement.style.outline = 'none';
+      this._canvas = new Canvas(this._canvasElement);
 
+      this._data = data;
       this._loop = loop.bind(this);
 
-      this._pressedKeys = new Set();
-      this._canvasElem.addEventListener('keydown', e => {
-        this._pressedKeys.add(e.key);
+      this._keys = new Set();
+      this._canvasElement.addEventListener('keydown', e => {
+        this._keys.add(e.key);
       });
-      this._canvasElem.addEventListener('keyup', e => {
-        this._pressedKeys.delete(e.key);
+      this._canvasElement.addEventListener('keyup', e => {
+        this._keys.delete(e.key);
       });
 
-      this._mousePos = {x: 0, y: 0};
-      this._isMousePressed = false;
-      this._canvasElem.addEventListener('pointerdown', e => {
-        this._isMousePressed = true;
-        this._canvasElem.setPointerCapture(e.pointerId);
+      this._mouse = { pressed: false, x: 0, y: 0 };
+      this._canvasElement.addEventListener('pointerdown', e => {
+        this._mouse.pressed = true;
+        this._canvasElement.setPointerCapture(e.pointerId);
       });
-      this._canvasElem.addEventListener('pointerup', e => {
-        this._isMousePressed = false;
-        this._canvasElem.releasePointerCapture(e.pointerId);
+      this._canvasElement.addEventListener('pointerup', e => {
+        this._mouse.pressed = false;
+        this._canvasElement.releasePointerCapture(e.pointerId);
       });
-      this._canvasElem.addEventListener('pointermove', e => {
-        this._mousePos.x = Math.min(this._canvasElem.width, Math.max(0, e.offsetX));
-        this._mousePos.y = Math.min(this._canvasElem.height, Math.max(0, e.offsetY));
+      this._canvasElement.addEventListener('pointermove', e => {
+        this._mouse.x = Math.min(this._canvasElement.width, Math.max(0, e.offsetX));
+        this._mouse.y = Math.min(this._canvasElement.height, Math.max(0, e.offsetY));
       });
 
       if (el) {
@@ -75,23 +74,19 @@
     }
 
     get width() {
-      return this._canvasElem.width;
+      return this._canvasElement.width;
     }
 
     get height() {
-      return this._canvasElem.height;
+      return this._canvasElement.height;
     }
 
-    get pressedKeys() {
-      return this._pressedKeys;
+    get keys() {
+      return this._keys;
     }
 
-    get isMousePressed() {
-      return this._isMousePressed;
-    }
-
-    get mousePos() {
-      return this._mousePos;
+    get mouse() {
+        return this._mouse;
     }
 
     get canvas() {
@@ -105,7 +100,7 @@
       } else {
         elem = el;
       }
-      elem.replaceWith(this._canvasElem);
+      elem.replaceWith(this._canvasElement);
     }
 
     run() {
