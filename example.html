@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8"/>
-    <title>game.js Example</title>
-  </head>
-  <body>
-    <h1>game.js Example</h1>
-    <p>Click and move your mouse in the area below:</p>
-    <canvas id="canvas"></canvas>
-    <script src="game.js"></script>
-    <script>
-      (() => {
+
+<head>
+	<meta charset="utf-8" />
+	<title>game.js Example</title>
+</head>
+
+<body>
+	<h1>game.js Example</h1>
+	<p>Click and move your mouse in the area below:</p>
+	<canvas id="canvas"></canvas>
+	<script src="game.js">
+	</script>
+	<script>
+		(() => {
         const game = new Game({
           el: '#canvas',
           loop(t, dt) {
@@ -23,6 +26,7 @@
         });
         game.run();
       })();
-    </script>
-  </body>
+	</script>
+</body>
+
 </html>

@@ -33,7 +33,7 @@
         canvasWidth = 600,
         canvasHeight = 480,
         data = {},
-        loop = function() {},
+        loop = function() { },
       } = config;
 
       this._canvasElement = document.createElement('canvas');
@@ -86,7 +86,7 @@
     }
 
     get mouse() {
-        return this._mouse;
+      return this._mouse;
     }
 
     get canvas() {
