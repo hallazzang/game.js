@@ -93,6 +93,10 @@
       return this._canvas;
     }
 
+    get data() {
+      return this._data;
+    }
+
     mount(el) {
       let elem;
       if (typeof el === 'string') {
