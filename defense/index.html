@@ -55,7 +55,7 @@
           }
           ctx.lineTo(point.x, point.y);
         });
-        ctx.lineWidth = 30;
+        ctx.lineWidth = 40;
         ctx.strokeStyle = 'rgb(0, 0, 0)';
         ctx.stroke();
         ctx.restore();
@@ -99,6 +99,16 @@
         ctx.arc(0, 0, 10, 0, Math.PI*2);
         ctx.fillStyle = 'rgb(0, 255, 0)';
         ctx.fill();
+
+        ctx.beginPath();
+        ctx.rect(-15, -20, 30 * this.currentHP / this.hp, 5);
+        ctx.fillStyle = 'rgb(255, 0, 0)';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.rect(-15, -20, 30, 5);
+        ctx.strokeStyle = 'rgb(255, 255, 255)';
+        ctx.stroke();
         ctx.restore();
       }
     }
@@ -148,9 +158,9 @@
           this.ctx.restore();
 
           this.paths.forEach(path => path.draw(this.ctx));
+          this.monsters.forEach(monster => monster.draw(this.ctx));
           this.towers.forEach(tower => tower.drawRange(this.ctx));
           this.towers.forEach(tower => tower.draw(this.ctx));
-          this.monsters.forEach(monster => monster.draw(this.ctx));
         });
       }
     }
