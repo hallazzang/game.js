@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Defense Game</title>
+</head>
+
+<body>
+	<canvas id="canvas"></canvas>
+	<script>
+		class Tower {
+      constructor(x, y, damage, range, attackSpeed) {
+        this.x = x;
+        this.y = y;
+        this.damage = damage;
+        this.range = range;
+        this.attackSpeed = attackSpeed;
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.fillStyle = 'rgb(255, 255, 0)';
+        ctx.fillRect(-20, -20, 40, 40);
+        ctx.restore();
+      }
+
+      drawRange(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.beginPath();
+        ctx.arc(0, 0, this.range, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(100, 100, 0, 0.3)';
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    class Path {
+      constructor(...points) {
+        this.points = points.map(([x, y]) => ({ x, y }));
+      }
+
+      get length() {
+        return 0;
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.beginPath();
+        this.points.reduce((prevPoint, point) => {
+          if (prevPoint) {
+            ctx.moveTo(prevPoint.x, prevPoint.y);
+          }
+          ctx.lineTo(point.x, point.y);
+        });
+        ctx.lineWidth = 30;
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    class Monster {
+      constructor(path, hp, speed) {
+        this.path = path;
+        this.pathIdx = 0;
+        this.x = path.points[0].x;
+        this.y = path.points[0].y;
+        this.hp = hp;
+        this.currentHP = hp;
+        this.speed = speed;
+        this.alive = true;
+      }
+
+      get remainingDistance() {
+        return 0;
+      }
+
+      move(dt) {
+        const dest = this.path.points[this.pathIdx + 1];
+        if (!dest) {
+          this.alive = false;
+          return;
+        }
+        const angle = Math.atan2(dest.y - this.y, dest.x - this.x);
+        this.x += Math.cos(angle) * this.speed * dt;
+        this.y += Math.sin(angle) * this.speed * dt;
+        if (distance(this, dest) <= 1) {
+          this.pathIdx++;
+        }
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.beginPath();
+        ctx.arc(0, 0, 10, 0, Math.PI*2);
+        ctx.fillStyle = 'rgb(0, 255, 0)';
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    class Game {
+      constructor(canvas) {
+        this.canvas = canvas;
+        canvas.width = 600;
+        canvas.height = 600;
+        this.ctx = canvas.getContext('2d');
+
+        this.towers = [];
+        this.paths = [];
+        this.monsters = [];
+      }
+
+      init() {
+        this.towers.push(
+          new Tower(175, 75, 5, 150, 3.0),
+          new Tower(175, 225, 5, 150, 3.0)
+        );
+        this.paths.push(new Path(
+          [100, -30],
+          [100, 150],
+          [500, 150],
+          [500, 450],
+          [100, 450],
+          [100, 630]
+        ));
+      }
+
+      run() {
+        let lastMonsterAdded;
+
+        runAnimationLoop((t, dt) => {
+          if (!lastMonsterAdded || t - lastMonsterAdded >= 1) {
+            this.monsters.push(new Monster(this.paths[0], 100, 100));
+            lastMonsterAdded = t;
+          }
+
+          this.monsters.forEach(monster => monster.move(dt));
+          this.monsters = this.monsters.filter(monster => monster.alive);
+
+          this.ctx.save();
+          this.ctx.fillStyle = 'rgb(100, 100, 100)'
+          this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+          this.ctx.restore();
+
+          this.paths.forEach(path => path.draw(this.ctx));
+          this.towers.forEach(tower => tower.drawRange(this.ctx));
+          this.towers.forEach(tower => tower.draw(this.ctx));
+          this.monsters.forEach(monster => monster.draw(this.ctx));
+        });
+      }
+    }
+
+		function runAnimationLoop(loop) {
+      let prevT;
+      function wrappedLoop(t) {
+        if (prevT) {
+          loop(t / 1000, (t - prevT) / 1000);
+        }
+        prevT = t;
+        requestAnimationFrame(wrappedLoop);
+      }
+      requestAnimationFrame(wrappedLoop);
+    }
+
+    function distance(a, b) {
+      return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+    }
+
+    const game = new Game(document.getElementById('canvas'));
+    game.init();
+    game.run();
+	</script>
+</body>
+
+</html>
